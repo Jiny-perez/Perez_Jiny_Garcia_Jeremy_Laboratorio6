@@ -1,27 +1,183 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package laboratorio_semana7;
-import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.*;
-public class JuegoMemoria extends javax.swing.JFrame {
+import javax.swing.*;
+import java.util.*;
+import javax.swing.Timer;
 
-    private JButton[][]botones =new JButton[6][6];
-    private ImageIcon imagenOriginal;
-    private ImageIcon imagenAMostrar;
+public class MemoramaBasico extends JFrame {
+    private final int totalCartas = 36;
+    private final int totalPares = totalCartas / 2;
+    private JButton[] arregloBotones = new JButton[totalCartas];
+    private int[] valorCarta = new int[totalCartas];
+    private ImageIcon[] iconosCarta = new ImageIcon[totalPares];
+    private ImageIcon iconoReverso;
     
-    public JuegoMemoria() {
-        
+    private JButton primerBoton = null;
+    private JButton segundoBoton = null;
+    private int primerIndice = -1;
+    private boolean estaProcesando = false;
+    private int contadorIntentos = 0;
+   
+    public MemoramaBasico() {
         initComponents();
+        inicializarJuego();
     }
-
     
-    private void CargarImagenes (){
-        imagenOriginal = transformImagen("imagenes/Original.jpg");
-        imagenAMostrar = transformImagen("imagenes/Mostrar.jpeg");
+    private void initComponents() {
+        jPanel1 = new JPanel(new GridLayout(6, 6));
+        
+
+        
+        jButton38.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                jButton38ActionPerformed(evt);
+            }
+        });
+        jButton44.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                jButton44ActionPerformed(evt);
+            }
+        });
+        jButton50.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                jButton50ActionPerformed(evt);
+            }
+        });
+        jButton56.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                jButton56ActionPerformed(evt);
+            }
+        });
+        jButton62.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                jButton62ActionPerformed(evt);
+            }
+        });
+        jButton68.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                jButton68ActionPerformed(evt);
+            }
+        });
+        
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(800, 800);
+        setLayout(new BorderLayout());
+        add(jPanel1, BorderLayout.CENTER);
+        setLocationRelativeTo(null);
     }
+    
+    private void inicializarJuego() {
+
+        iconoReverso = new ImageIcon(getClass().getResource("/imagenes/reverso.png"));
+        
+        for (int i = 0; i < totalPares; i++) {
+            iconosCarta[i] = new ImageIcon(getClass().getResource("/imagenes/img" + (i + 1) + ".png"));
+        }
+        
+        // Crear una lista con valores duplicados para cada par
+        ArrayList<Integer> listaValores = new ArrayList<>();
+        for (int i = 0; i < totalPares; i++) {
+            listaValores.add(i);
+            listaValores.add(i);
+        }
+        // Mezclar aleatoriamente la lista
+        Collections.shuffle(listaValores);
+        for (int i = 0; i < totalCartas; i++) {
+            valorCarta[i] = listaValores.get(i);
+        }
+        
+        arregloBotones[0]  = jButton37;
+        arregloBotones[1]  = jButton38;
+        arregloBotones[2]  = jButton39;
+        arregloBotones[3]  = jButton40;
+        arregloBotones[4]  = jButton41;
+        arregloBotones[5]  = jButton42;
+        arregloBotones[6]  = jButton43;
+        arregloBotones[7]  = jButton44;
+        arregloBotones[8]  = jButton45;
+        arregloBotones[9]  = jButton46;
+        arregloBotones[10] = jButton47;
+        arregloBotones[11] = jButton48;
+        arregloBotones[12] = jButton49;
+        arregloBotones[13] = jButton50;
+        arregloBotones[14] = jButton51;
+        arregloBotones[15] = jButton52;
+        arregloBotones[16] = jButton53;
+        arregloBotones[17] = jButton54;
+        arregloBotones[18] = jButton55;
+        arregloBotones[19] = jButton56;
+        arregloBotones[20] = jButton57;
+        arregloBotones[21] = jButton58;
+        arregloBotones[22] = jButton59;
+        arregloBotones[23] = jButton6;
+        arregloBotones[24] = jButton60;
+        arregloBotones[25] = jButton61;
+        arregloBotones[26] = jButton62;
+        arregloBotones[27] = jButton63;
+        arregloBotones[28] = jButton64;
+        arregloBotones[29] = jButton65;
+        arregloBotones[30] = jButton66;
+        arregloBotones[31] = jButton67;
+        arregloBotones[32] = jButton68;
+        arregloBotones[33] = jButton69;
+        arregloBotones[34] = jButton70;
+        arregloBotones[35] = jButton71;
+        
+        for (int i = 0; i < totalCartas; i++) {
+            arregloBotones[i].setIcon(iconoReverso);
+            arregloBotones[i].setEnabled(true);
+        }
+        
+        contadorIntentos = 0;
+        primerBoton = null;
+        segundoBoton = null;
+        estaProcesando = false;
+    }
+    
+    private void accionCarta(int indice) {
+        if (estaProcesando) return;
+        JButton botonActual = arregloBotones[indice];
+        if (!botonActual.isEnabled()) return;
+        if (botonActual.getIcon() != iconoReverso) return;
+        
+        botonActual.setIcon(iconosCarta[valorCarta[indice]]);
+        
+        if (primerBoton == null) {
+
+            primerBoton = botonActual;
+            primerIndice = indice;
+        } else {
+
+            segundoBoton = botonActual;
+            estaProcesando = true;
+            contadorIntentos++;
+            
+            if (valorCarta[primerIndice] == valorCarta[indice]) {
+
+                primerBoton.setEnabled(false);
+                segundoBoton.setEnabled(false);
+                reiniciarSeleccion();
+                estaProcesando = false;
+                verificarFinJuego();
+            } else {
+
+                Timer temporizador = new Timer(2000, new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+                        primerBoton.setIcon(iconoReverso);
+                        segundoBoton.setIcon(iconoReverso);
+                        reiniciarSeleccion();
+                        estaProcesando = false;
+                        verificarFinJuego();
+                    }
+                });
+                temporizador.setRepeats(false);
+                temporizador.start();
+            }
+        }
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -242,21 +398,89 @@ public class JuegoMemoria extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(20, 20, 20)
+                .addGap(18, 18, 18)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(21, 21, 21)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(24, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addGap(17, 17, 17))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void reiniciarSeleccion() {
+        primerBoton = null;
+        segundoBoton = null;
+        primerIndice = -1;
+    }
+    
+    private void verificarFinJuego() {
+        boolean finJuego = true;
+        for (JButton boton : arregloBotones) {
+            if (boton.isEnabled()) {
+                finJuego = false;
+                break;
+            }
+        }
+        if (finJuego || contadorIntentos >= 10) {
+            String mensaje = finJuego ?
+                    "¡Felicidades! Has encontrado todos los pares en " + contadorIntentos + " intentos." :
+                    "Has superado el número máximo de intentos. ¡Juego terminado!";
+            JOptionPane.showMessageDialog(this, mensaje);
+
+            for (JButton boton : arregloBotones) {
+                boton.setEnabled(false);
+            }
+        }
+    }
+    
+
+    private void jButton38ActionPerformed(ActionEvent evt) {
+        accionCarta(1);
+    }
+    
+    private void jButton44ActionPerformed(ActionEvent evt) {
+        accionCarta(7);
+    }
+    
+    private void jButton50ActionPerformed(ActionEvent evt) {
+        accionCarta(13);
+    }
+    
+    private void jButton56ActionPerformed(ActionEvent evt) {
+        accionCarta(19);
+    }
+    
+    private void jButton62ActionPerformed(ActionEvent evt) {
+        accionCarta(25);
+    }
+    
+    private void jButton68ActionPerformed(ActionEvent evt) {
+        accionCarta(31);
+    }
+    
+    // Si necesitas métodos para escalar o transformar imágenes, puedes implementarlos aquí
+    private ImageIcon escalarImagen(String rutaImagen) {
+        throw new UnsupportedOperationException("No implementado aún.");
+    }
+    
+    private ImageIcon transformImagen(String rutaImagen) {
+        throw new UnsupportedOperationException("No implementado aún.");
+    }
+    
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new MemoramaBasico().setVisible(true);
+            }
+        });
+    }
+}
     private void jButton38ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton38ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton38ActionPerformed
@@ -283,41 +507,6 @@ public class JuegoMemoria extends javax.swing.JFrame {
 
     /**
      * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(JuegoMemoria.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(JuegoMemoria.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(JuegoMemoria.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(JuegoMemoria.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new JuegoMemoria().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton37;
